@@ -15,7 +15,7 @@ export default function Taskbar() {
     if (name == "settings" && !isSettingsOpen) {
       toggleSettings();
     } else if (name == "settings") {
-      const minimize = document.querySelector(".minimize");
+      const minimize = document.querySelector(".minimize") as HTMLElement | null;
       if (minimize) {
         minimize.click();
       }
