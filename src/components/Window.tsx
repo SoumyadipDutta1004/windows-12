@@ -15,11 +15,13 @@ gsap.registerPlugin(Draggable, InertiaPlugin);
 
 export default function Window({
   ref,
+  setRef,
   title,
   children,
   close,
 }: {
-  ref: RefObject<HTMLDivElement | null>;
+  ref: RefObject<HTMLDivElement> | null;
+  setRef: (ref: RefObject<HTMLDivElement> | null) => void;
   title: string;
   children: ReactNode;
   close: () => void;
@@ -27,12 +29,16 @@ export default function Window({
   const [isMaximize, setIsMaximize] = useState<boolean>(false);
   const [isMinimize, setIsMinimize] = useState<boolean>(false);
 
-  ref = useRef<HTMLDivElement>(null);
-  const resizerRef = useRef<HTMLDivElement>(null);
-  const titleBarRef = useRef<HTMLDivElement>(null);
+  const windowRef = useRef<HTMLDivElement | null>(null);
+  setRef(windowRef as RefObject<HTMLDivElement>);
+  const resizerRef = useRef<HTMLDivElement | null>(null);
+  const titleBarRef = useRef<HTMLDivElement | null>(null);
   const draggableRef = useRef<Draggable[] | null>(null);
 
+
   useEffect(() => {
+
+    if(!ref) return;
     // Draggable Window
     if (Draggable) {
       draggableRef.current = Draggable.create(ref.current, {
@@ -100,7 +106,7 @@ export default function Window({
               toggleMinimize(
                 isMinimize,
                 setIsMinimize,
-                ref,
+                ref as RefObject<HTMLDivElement>,
                 titleBarRef,
                 draggableRef
               )
@@ -114,7 +120,7 @@ export default function Window({
               toggleMaximize(
                 isMaximize,
                 setIsMaximize,
-                ref,
+                ref as RefObject<HTMLDivElement>,
                 titleBarRef,
                 draggableRef
               )

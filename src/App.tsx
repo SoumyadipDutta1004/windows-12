@@ -1,4 +1,6 @@
+import type { RefObject } from "react";
 import Clock from "./components/Clock";
+import StartMenu from "./components/StartMenu";
 import Taskbar from "./components/Taskbar";
 import Wallpaper from "./components/Wallpaper";
 import WallpaperChanger from "./components/WallpaperChanger";
@@ -9,17 +11,24 @@ export default function App() {
   const isSettingsOpen = useSettingsStore((state) => state.isOpen);
   const toggleSettings = useSettingsStore((state) => state.toggleOpen);
 
-  const settingsRef = useSettingsStore((state) => state.setSettingsRef);
+  const setSettingsRef = useSettingsStore((state) => state.setSettingsRef);
+  const settingsRef = useSettingsStore((state) => state.settingsRef);
 
   return (
     <main className="h-screen w-full overflow-hidden relative">
+      <StartMenu />
       {isSettingsOpen && (
-        <Window title="Settings" ref={settingsRef} close={toggleSettings}>
+        <Window
+          title="Settings"
+          ref={settingsRef as RefObject<HTMLDivElement>}
+          setRef={setSettingsRef}
+          close={toggleSettings}
+        >
           <WallpaperChanger />
         </Window>
       )}
       <Clock />
-      <Taskbar setSettings={toggleSettings} />
+      <Taskbar />
       <Wallpaper />
     </main>
   );

@@ -11,7 +11,6 @@ export function toggleMaximize(
   titleBarRef: RefObject<HTMLDivElement | null>,
   draggableRef: RefObject<Draggable[] | null>
 ) {
-  
   if (!ref.current) return;
 
   if (isMaximize) {
@@ -88,6 +87,28 @@ export function toggleMinimize(
           trigger: titleBarRef.current,
         });
       },
+    });
+  }
+}
+
+export function toggleMenu(
+  startMenuRef: RefObject<HTMLDivElement>,
+  isOpen: boolean,
+  toggleOpen: () => void
+) {
+  if (!isOpen) {
+    toggleOpen();
+    gsap.to(startMenuRef.current, {
+      y: "-116%",
+      duration: 0.5,
+      ease: "power2.inOut"
+    });
+  } else {
+    toggleOpen();
+    gsap.to(startMenuRef.current, {
+      y: "0",
+      duration: 0.5,
+      ease: "power2.inOut"
     });
   }
 }

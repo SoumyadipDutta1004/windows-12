@@ -7,8 +7,11 @@ export const wallpaper = [
   "/wallpapers/wallpaper-6.jpg",
 ];
 
-export const taskbarIcons = {
+export const menuIcons = {
   start: "/icons/Start.png",
+};
+
+export const taskbarIcons = {
   fileExplorer: "/icons/FileExplorer.png",
   settings: "/icons/Settings.png",
   github: "/icons/Github.png",
