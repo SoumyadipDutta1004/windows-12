@@ -1,70 +1,41 @@
 // ResizableWindow.tsx
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import gsap from "gsap";
 import { Draggable, InertiaPlugin } from "gsap/all";
 import { windowIcons } from "../contexts/ui.context";
+import { toggleMaximize, toggleMinimize } from "../utils/window.utils";
 
 gsap.registerPlugin(Draggable, InertiaPlugin);
 
 export default function Window({
+  ref,
   title,
   children,
+  close,
 }: {
+  ref: RefObject<HTMLDivElement | null>;
   title: string;
   children: ReactNode;
+  close: () => void;
 }) {
   const [isMaximize, setIsMaximize] = useState<boolean>(false);
+  const [isMinimize, setIsMinimize] = useState<boolean>(false);
 
-  const windowRef = useRef<HTMLDivElement>(null);
+  ref = useRef<HTMLDivElement>(null);
   const resizerRef = useRef<HTMLDivElement>(null);
   const titleBarRef = useRef<HTMLDivElement>(null);
   const draggableRef = useRef<Draggable[] | null>(null);
 
-  // maximize logic
-  function maximize() {
-    if (!windowRef.current) return;
-
-    if (isMaximize) {
-      setIsMaximize((prev) => !prev);
-      // windowRef.current.style.borderRadius = "0%";
-      // windowRef.current.style.width = "100%";
-      // windowRef.current.style.height = "100%";
-      gsap.set(windowRef.current, { clearProps: "transform" });
-
-      gsap.to(windowRef.current, {
-        height: "100%",
-        width: "100%",
-        borderRadius: 0,
-        top: 0,
-        left: 0,
-        duration: 0.5,
-      });
-    } else {
-      setIsMaximize((prev) => !prev);
-      gsap.to(windowRef.current, {
-        height: "384px",
-        width: "672px",
-        borderRadius: "12px",
-        top: "80px",
-        left: "80px",
-        duration: 0.5,
-        onComplete: () => {
-          // After animation, re-enable Draggable
-          draggableRef.current = Draggable.create(windowRef.current, {
-            bounds: "body",
-            inertia: true,
-            edgeResistance: 0.65,
-            trigger: titleBarRef.current,
-          });
-        },
-      });
-    }
-  }
-
   useEffect(() => {
     // Draggable Window
     if (Draggable) {
-      draggableRef.current = Draggable.create(windowRef.current, {
+      draggableRef.current = Draggable.create(ref.current, {
         bounds: "body",
         inertia: true,
         edgeResistance: 0.65,
@@ -74,7 +45,7 @@ export default function Window({
 
     // Resizable logic (basic)
     const resizer = resizerRef.current;
-    const windowEl = windowRef.current;
+    const windowEl = ref.current;
 
     let isResizing = false;
 
@@ -110,11 +81,11 @@ export default function Window({
     return () => {
       resizer?.removeEventListener("mousedown", onMouseDown);
     };
-  }, [windowRef]);
+  }, [ref]);
 
   return (
     <div
-      ref={windowRef}
+      ref={ref}
       className="absolute top-20 left-20 z-100 w-2xl h-96 bg-black/45 backdrop-blur-lg rounded-xl overflow-hidden"
     >
       <div
@@ -123,16 +94,38 @@ export default function Window({
       >
         <div className=" text-white font-semibold font-inter px-8">{title}</div>
         <div className="flex">
-          <div className="h-9 w-12 hover:bg-neutral-600 duration-75 flex items-center justify-center text-2xl text-white">
+          <div
+            className="minimize h-9 w-12 hover:bg-neutral-600 duration-75 flex items-center justify-center text-2xl text-white"
+            onClick={() =>
+              toggleMinimize(
+                isMinimize,
+                setIsMinimize,
+                ref,
+                titleBarRef,
+                draggableRef
+              )
+            }
+          >
             <img src={windowIcons.minimize} alt="" className="w-5 invert-100" />
           </div>
           <div
             className="h-9 w-12 hover:bg-neutral-600 duration-75 flex items-center justify-center"
-            onClick={maximize}
+            onClick={() =>
+              toggleMaximize(
+                isMaximize,
+                setIsMaximize,
+                ref,
+                titleBarRef,
+                draggableRef
+              )
+            }
           >
             <img src={windowIcons.maximize} alt="" className="w-5 invert-100" />
           </div>
-          <div className="h-9 w-12 hover:bg-red-600 duration-75 flex items-center justify-center text-2xl text-white">
+          <div
+            className="h-9 w-12 hover:bg-red-600 duration-75 flex items-center justify-center text-2xl text-white"
+            onClick={close}
+          >
             <img src={windowIcons.close} alt="" className="w-5 invert-100" />
           </div>
         </div>

@@ -7,13 +7,14 @@ export const wallpaper = [
   "/wallpapers/wallpaper-6.jpg",
 ];
 
-export const taskbarIcons = [
-  "/icons/Start.png",
-  "/icons/FileExplorer.png",
-  "/icons/Github.png",
-  "/icons/VsCode.png",
-  "/icons/Chrome.png",
-];
+export const taskbarIcons = {
+  start: "/icons/Start.png",
+  fileExplorer: "/icons/FileExplorer.png",
+  settings: "/icons/Settings.png",
+  github: "/icons/Github.png",
+  vsCode: "/icons/VsCode.png",
+  chrome: "/icons/Chrome.png",
+};
 
 export const windowIcons = {
   minimize : "/icons/minimize.png",
